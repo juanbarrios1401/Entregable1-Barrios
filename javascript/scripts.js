@@ -68,11 +68,13 @@ function convertirUnidades() {
         alert(`La cantidad de ${cantidad} ${unidadOrigen} es equivalente a ${cantidadConvertida.toFixed(2)} ${unidadDestino}.`);
 
         // Preguntar si el usuario desea realizar otra conversión
+
         let respuesta = prompt("¿Desea realizar otra conversión? (si/no):").toLowerCase();
         if (respuesta !== "si") {
             continuar = false;
             alert("Gracias por utilizar el convertidor de unidades. ¡Hasta luego!");
         }
+
     }
 }
 
