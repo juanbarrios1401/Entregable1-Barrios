@@ -1,82 +1,110 @@
-// Convertidor de unidades de medida de distancia
+class Calculadora {
+    constructor(elementoPantalla, elementoUltimaOperacion) {
+        this.elementoPantalla = elementoPantalla;
+        this.elementoUltimaOperacion = elementoUltimaOperacion;
+        this.limpiar();
+        this.cargarUltimaOperacion();// Carga la última operación 
+    }
 
-// Función principal del convertidor de unidades
-function convertirUnidades() {
-    const unidades = ["metros", "centimetros", "milimetros", "kilometros", "millas"]; // Array con las unidades admitidas
-    let continuar = true; // Variable de control para el ciclo while
+    limpiar() {
+        this.operandoActual = "";
+        this.operandoAnterior = "";
+        this.operacion = null;
+        this.actualizarPantalla();
+        this.elementoUltimaOperacion.value = "";  // Reinicia la calculadora
+    }
 
-    while (continuar) {
-        // Solicitar la distancia y la unidad de origen al usuario
-        let cantidad = parseFloat(prompt("Ingrese la cantidad de la distancia (solo números):"));
-        if (isNaN(cantidad) || cantidad <= 0) {
-            alert("Por favor, ingrese un número válido y mayor a 0.");
-            continue;
+    borrar() {
+        this.operandoActual = this.operandoActual.slice(0, -1);
+        this.actualizarPantalla(); // Elimina el último número ingresado
+    }
+
+    agregarNumero(numero) {
+        if (numero === "." && this.operandoActual.includes(".")) return;
+        this.operandoActual += numero;
+        this.actualizarPantalla();// Agrega números al display
+    }
+    seleccionarOperacion(operacion) {
+        if (this.operandoActual === "") return;
+        if (this.operandoAnterior !== "") this.calcular();
+        this.operacion = operacion;
+        this.operandoAnterior = this.operandoActual;
+        this.operandoActual = "";
+        this.actualizarPantalla();// Selecciona la operación
+    }
+    // Hace la cuenta
+    calcular() {
+        const anterior = parseFloat(this.operandoAnterior);
+        const actual = parseFloat(this.operandoActual);
+        if (isNaN(anterior) || isNaN(actual)) return;
+
+        let resultado;
+        switch (this.operacion) {
+            case "+":
+                resultado = anterior + actual;
+                break;
+            case "-":
+                resultado = anterior - actual;
+                break;
+            case "*":
+                resultado = anterior * actual;
+                break;
+            case "/":
+                resultado = actual === 0 ? "Error" : anterior / actual;
+                break;
+            default:
+                return;
         }
 
-        let unidadOrigen = prompt(`Ingrese la unidad de la distancia (${unidades.join(", ")})`).toLowerCase();
-        if (!unidades.includes(unidadOrigen)) {
-            alert("Unidad no válida. Inténtelo de nuevo.");
-            continue;
+        const ultimaOperacion = `${this.operandoAnterior} ${this.operacion} ${this.operandoActual} = ${resultado}`;
+
+        this.elementoUltimaOperacion.value = ultimaOperacion;
+        this.guardarUltimaOperacion(ultimaOperacion); // Guarda la última operación en localStorage
+
+        this.operandoActual = resultado.toString();
+        this.operacion = null;
+        this.operandoAnterior = "";
+        this.actualizarPantalla();
+    }
+
+    // Actualiza la pantalla
+    actualizarPantalla() {
+        this.elementoPantalla.textContent = this.operandoActual || "0";
+    } 
+
+    // Guarda la última operación en localStorage
+    guardarUltimaOperacion(operacion) {
+        localStorage.setItem("ultimaOperacion", operacion);
+    }
+
+    // Carga la última operación desde localStorage
+    cargarUltimaOperacion() {
+        const operacionGuardada = localStorage.getItem("ultimaOperacion");
+        if (operacionGuardada) {
+            this.elementoUltimaOperacion.value = operacionGuardada;
         }
-
-        let unidadDestino = prompt(`Ingrese la unidad a la que desea convertir (${unidades.join(", ")})`).toLowerCase();
-        if (!unidades.includes(unidadDestino)) {
-            alert("Unidad no válida. Inténtelo de nuevo.");
-            continue;
-        }
-
-        // Conversión de la cantidad a metros
-        let cantidadEnMetros;
-        switch (unidadOrigen) {
-            case "metros":
-                cantidadEnMetros = cantidad;
-                break;
-            case "centimetros":
-                cantidadEnMetros = cantidad / 100;
-                break;
-            case "milimetros":
-                cantidadEnMetros = cantidad / 1000;
-                break;
-            case "kilometros":
-                cantidadEnMetros = cantidad * 1000;
-                break;
-            case "millas":
-                cantidadEnMetros = cantidad * 1609.34;
-                break;
-        }
-
-        // Conversión de la cantidad en metros a la unidad de destino
-        let cantidadConvertida;
-        switch (unidadDestino) {
-            case "metros":
-                cantidadConvertida = cantidadEnMetros;
-                break;
-            case "centimetros":
-                cantidadConvertida = cantidadEnMetros * 100;
-                break;
-            case "milimetros":
-                cantidadConvertida = cantidadEnMetros * 1000;
-                break;
-            case "kilometros":
-                cantidadConvertida = cantidadEnMetros / 1000;
-                break;
-            case "millas":
-                cantidadConvertida = cantidadEnMetros / 1609.34;
-                break;
-        }
-
-        alert(`La cantidad de ${cantidad} ${unidadOrigen} es equivalente a ${cantidadConvertida.toFixed(2)} ${unidadDestino}.`);
-
-        // Preguntar si el usuario desea realizar otra conversión
-
-        let respuesta = prompt("¿Desea realizar otra conversión? (si/no):").toLowerCase();
-        if (respuesta !== "si") {
-            continuar = false;
-            alert("Gracias por utilizar el convertidor de unidades. ¡Hasta luego!");
-        }
-
     }
 }
 
-// Iniciar el convertidor de unidades
-convertirUnidades();
+// Carga la calculadora
+document.addEventListener("DOMContentLoaded", () => {
+    const elementoPantalla = document.getElementById("pantalla");
+    const elementoUltimaOperacion = document.getElementById("ultima-operacion");
+    const botones = document.querySelectorAll(".btn");
+
+    const calculadora = new Calculadora(elementoPantalla, elementoUltimaOperacion);
+
+    botones.forEach((boton) => {
+        const accion = boton.dataset.action;
+        const valor = boton.value;
+
+        boton.addEventListener("click", () => {
+            if (accion === "limpiar") calculadora.limpiar();
+            else if (accion === "borrar") calculadora.borrar();
+            else if (accion === "operacion") calculadora.seleccionarOperacion(valor);
+            else if (accion === "igual") calculadora.calcular();
+            else calculadora.agregarNumero(valor);
+        });
+    });
+});
+

@@ -1,14 +1,40 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Entregable1-Barrios</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Calculadora</title>
+  <link rel="stylesheet" href="style/styles.css">
+  <script src="javascript/scripts.js" defer></script>
 </head>
 <body>
-    <h1>Juan Francisco Barrios</h1>
+  <div class="calculadora">
+    <div class="pantalla" id="pantalla">0</div>
+    <input type="text" id="ultima-operacion" class="ultima-operacion" placeholder="Última operación" readonly>
+    <div class="botones">
+      <button class="btn" data-action="limpiar">C</button>
+      <button class="btn" data-action="borrar">DEL</button>
+      <button class="btn" data-action="operacion" value="/">÷</button>
+      <button class="btn" data-action="operacion" value="*">×</button>
 
-    <script src="/javascript/scripts.js"></script> <!-- Aca mismo no sabia si usar o no, la etiqueta "defer" y ubicar el enlace arriba, ya que este mismo lo q hace es no bloquear el renderizado de la página mientras se carga el archivo JavaScrip-->
-    
+      <button class="btn" value="7">7</button>
+      <button class="btn" value="8">8</button>
+      <button class="btn" value="9">9</button>
+      <button class="btn" data-action="operacion" value="-">−</button>
+
+      <button class="btn" value="4">4</button>
+      <button class="btn" value="5">5</button>
+      <button class="btn" value="6">6</button>
+      <button class="btn" data-action="operacion" value="+">+</button>
+
+      <button class="btn" value="1">1</button>
+      <button class="btn" value="2">2</button>
+      <button class="btn" value="3">3</button>
+      <button class="btn" data-action="igual">=</button>
+
+      <button class="btn" value="0" style="grid-column: span 2;">0</button>
+      <button class="btn" value=".">.</button>
+    </div>
+  </div>
 </body>
 </html>
